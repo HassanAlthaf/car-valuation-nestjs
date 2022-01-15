@@ -31,4 +31,25 @@ describe('Authentication System', () => {
         expect(email).toEqual(userEmail);
       });
   });
+
+  it('/whoami (GET)', async () => {
+    const userEmail = 'asdf1@asdf.com';
+
+    const res = await request(app.getHttpServer())
+      .post('/auth/signup')
+      .send({
+        email: userEmail,
+        password: '123',
+      })
+      .expect(201);
+
+    const cookie = res.get('Set-Cookie');
+
+    const { body } = await request(app.getHttpServer())
+      .get('/auth/whoami')
+      .set('Cookie', cookie)
+      .expect(200);
+
+    expect(body.email).toEqual(userEmail);
+  });
 });
